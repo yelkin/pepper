@@ -47,7 +47,8 @@ logger = logging.getLogger(__name__)
 
 
 class PepperCli(object):
-    def __init__(self, seconds_to_wait=3):
+    def __init__(self, seconds_to_wait=3, extra_headers=None):
+        self.extra_headers = extra_headers
         self.seconds_to_wait = seconds_to_wait
         self.parser = self.get_parser()
         self.parser.option_groups.extend([
@@ -665,7 +666,9 @@ class PepperCli(object):
         api = pepper.Pepper(
             self.parse_url(),
             debug_http=self.options.debug_http,
-            ignore_ssl_errors=self.options.ignore_ssl_certificate_errors)
+            ignore_ssl_errors=self.options.ignore_ssl_certificate_errors,
+            extra_headers=self.extra_headers,
+        )
 
         self.login(api)
 

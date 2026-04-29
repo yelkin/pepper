@@ -28,8 +28,8 @@ logger = logging.getLogger(__name__)
 
 
 class Pepper(object):
-    def __init__(self):
-        self.cli = PepperCli()
+    def __init__(self, extra_headers=None):
+        self.cli = PepperCli(extra_headers=extra_headers)
         if HAS_SALT:
             self.opts = salt.config.client_config(self.cli.options.master)
         else:
