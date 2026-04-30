@@ -72,7 +72,7 @@ class Pepper:
 
     """
 
-    def __init__(self, api_url="https://localhost:8000", debug_http=False, ignore_ssl_errors=False):
+    def __init__(self, api_url="https://localhost:8000", debug_http=False, ignore_ssl_errors=False, extra_headers=None):
         """
         Initialize the class with the URL of the API
 
@@ -95,6 +95,7 @@ class Pepper:
         self._ssl_verify = not ignore_ssl_errors
         self.auth = {}
         self.salt_version = None
+        self.extra_headers = extra_headers if extra_headers is not None else {}
 
     def req_stream(self, path):
         """
@@ -120,6 +121,8 @@ class Pepper:
         }
         if self.auth and "token" in self.auth and self.auth["token"]:
             headers.setdefault("X-Auth-Token", self.auth["token"])
+        elif 'Authorization' in self.extra_headers:
+            headers.update(self.extra_headers)
         else:
             raise PepperException("Authentication required")
             return
@@ -164,6 +167,8 @@ class Pepper:
         }
         if self.auth and "token" in self.auth and self.auth["token"]:
             headers.setdefault("X-Auth-Token", self.auth["token"])
+        elif 'Authorization' in self.extra_headers:
+            headers.update(self.extra_headers)
         else:
             raise PepperException("Authentication required")
             return
@@ -211,6 +216,7 @@ class Pepper:
             "Content-Type": "application/json",
             "X-Requested-With": "XMLHttpRequest",
         }
+        headers.update(self.extra_headers)
 
         opener = build_opener()
         for handler in opener.handlers:
@@ -292,6 +298,8 @@ class Pepper:
             "Content-Type": "application/json",
             "X-Requested-With": "XMLHttpRequest",
         }
+        headers.update(self.extra_headers)
+        
         if self.auth and "token" in self.auth and self.auth["token"]:
             headers.setdefault("X-Auth-Token", self.auth["token"])
         # Optionally toggle SSL verification
